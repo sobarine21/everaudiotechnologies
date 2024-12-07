@@ -2,8 +2,9 @@ import streamlit as st
 import speech_recognition as sr
 import google.generativeai as genai
 
-# Configure Gemini API key
-genai.configure(api_key="YOUR_API_KEY")
+# Configure the API key securely from Streamlit's secrets
+# Make sure to add GOOGLE_API_KEY in secrets.toml (for local) or Streamlit Cloud Secrets
+genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
 def transcribe_audio(audio_file):
     recognizer = sr.Recognizer()
@@ -30,6 +31,9 @@ if uploaded_file is not None:
     st.write("Transcript:")
     st.write(transcript)
 
-    analysis_result = analyze_text_with_gemini(transcript)
-    st.write("AI Analysis:")
-    st.write(analysis_result)
+    try:
+        analysis_result = analyze_text_with_gemini(transcript)
+        st.write("AI Analysis:")
+        st.write(analysis_result)
+    except Exception as e:
+        st.error(f"Error: {e}")
